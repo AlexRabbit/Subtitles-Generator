@@ -1,4 +1,5 @@
-# Subtitles Generator
+# Subtitles Generator - Generate .srt Both Locally or Let it Run on your PC and use it On other Devices.
+<img width="1410" height="1041" alt="image" src="https://github.com/user-attachments/assets/213cf61d-8d39-4266-994d-67982d1913bf" />
 
 > **Turn any video into professional `.srt` subtitle files** — locally, on your PC, powered by [OpenAI Whisper](https://github.com/openai/whisper).  
 > No cloud upload. No subscription. Drag, drop, pick languages, done.
@@ -18,39 +19,8 @@ Inspired by [auto-subtitle](https://github.com/m1guelpf/auto-subtitle) — rebui
 
 That is it. You do **not** need to install Python manually, run pip commands, or open a terminal — `run.bat` handles everything on first launch and every launch after.
 
-```
-Subtitles-Generator/
-└── run.bat   ← double-click this
-```
-
 > **Keep the console window open.** Closing it stops the app.  
 > **First run takes longer** (venv, packages, FFmpeg, Whisper model download). Later launches are much faster.
-
----
-
-## Table of contents
-
-1. [60-second workflow](#60-second-workflow-after-runbat-opens-the-app)
-2. [What `run.bat` does for you](#what-runbat-does-for-you-automatically)
-3. [Full tutorial — PC workflow](#full-tutorial--pc-workflow)
-4. [Subtitle output](#subtitle-output)
-5. [Languages & translation](#languages--translation)
-6. [Whisper models — which one to pick](#whisper-models--which-one-to-pick)
-7. [Phrase timing vs word-level timestamps](#phrase-timing-vs-word-level-timestamps)
-8. [GPU / CUDA acceleration](#gpu--cuda-acceleration)
-9. [Phone & tablet (LAN access)](#phone--tablet-lan-access)
-10. [Security & privacy](#security--privacy)
-11. [System tray & background use](#system-tray--background-use)
-12. [Built-in “How to Use” tour](#built-in-how-to-use-tour)
-13. [Supported video formats](#supported-video-formats)
-14. [Advanced configuration (`.env`)](#advanced-configuration-env)
-15. [Troubleshooting](#troubleshooting)
-16. [Project structure](#project-structure)
-17. [How it works (architecture)](#how-it-works-architecture)
-18. [Logs & debugging](#logs--debugging)
-19. [Helper scripts](#helper-scripts)
-20. [Requirements](#requirements)
-21. [FAQ](#faq)
 
 ---
 
@@ -75,43 +45,6 @@ MyVacation - (fr).srt
 
 ---
 
-## What `run.bat` does for you (automatically)
-
-Every time you double-click `run.bat`, it runs this pipeline — you never touch the command line:
-
-```mermaid
-flowchart LR
-    A[Double-click run.bat] --> B[Find Python 3.10+]
-    B --> C[Create venv if missing]
-    C --> D[Copy .env.example → .env if missing]
-    D --> E[pip install requirements.txt]
-    E --> F[Install CUDA PyTorch if NVIDIA GPU]
-    F --> G[Download FFmpeg if missing]
-    G --> H[Launch subtitles_generator.py]
-    H --> I[Desktop app window opens]
-```
-
-| Stage | What happens |
-|-------|----------------|
-| **Python** | Prefers 3.10 → 3.11 → 3.12 → 3.13 via the Windows `py` launcher |
-| **Virtual env** | Creates `venv/` inside the project (fully portable) |
-| **`.env`** | Auto-created from `.env.example` on first run |
-| **Packages** | Flask, Whisper, PyTorch, pywebview, translators, etc. |
-| **CUDA** | `scripts\install_cuda_torch.ps1` detects NVIDIA GPU and installs matching PyTorch |
-| **FFmpeg** | `scripts\install_ffmpeg.ps1` downloads a portable build if not in PATH |
-| **Launch** | Opens a native desktop window at `http://127.0.0.1:8765` |
-
-**Console output you should expect:**
-
-```
-This PC:  http://127.0.0.1:8765
-Phone:    enable "Allow LAN access" in Settings (off by default)
-Firewall: if phone cannot connect, run scripts\allow_lan_firewall.ps1 as Admin
-Close this window to stop the app.
-```
-
----
-
 ## Full tutorial — PC workflow
 
 ### Step 1 — Launch
@@ -131,8 +64,6 @@ Three ways to add content:
 | **Browse files** | Click the button in the drop zone; pick one or more videos |
 | **Browse folder** | Pick a folder — all supported videos inside are scanned recursively |
 
-Videos are **referenced by path** (not copied), except when uploaded from a phone (see [LAN section](#phone--tablet-lan-access)).
-
 ### Step 3 — Configure languages
 
 **Global defaults** (sidebar → Languages) apply to every video unless you override one card.
@@ -146,36 +77,6 @@ Videos are **referenced by path** (not copied), except when uploaded from a phon
    - Favorites are saved in `user_settings.json` on your PC.
 
 3. **Per-video override** — click **Select** on a card, then change languages for that file only.
-
-### Step 4 — Choose engine settings (optional)
-
-| Setting | Default | Recommendation |
-|---------|---------|----------------|
-| **Whisper model** | `base` | `base` for speed · `large-v3` for best quality on GPU |
-| **Use CUDA / GPU** | ON | Leave ON with NVIDIA GPU; turn OFF to force CPU |
-| **Word-level timestamps** | **OFF** | Leave OFF for normal movie-style subtitles |
-
-### Step 5 — Process
-
-| Button | Effect |
-|--------|--------|
-| **Process All** | Queues every video with its target languages |
-| **Process** (on one card) | Queues only that video |
-
-Jobs run **one at a time** in a background worker thread. The queue panel shows `Processing… (N in queue)` or `Queue idle`.
-
-### Step 6 — Collect your files
-
-When a job finishes:
-
-- SRT is written **beside the video file** on disk: `VideoName - (lang).srt`
-- The card shows **↓ en.srt** download links (useful on phone/LAN)
-- Click **Open folder** (PC only) to jump to the video in Explorer
-- Click **Remove** to drop the card from the queue (does not delete the video)
-
-### Step 7 — Stop the app
-
-Close the app window, then press any key in the `run.bat` console — or just close the console window.
 
 ---
 
@@ -247,31 +148,12 @@ Change the model in **Settings → Engine → Whisper model**. The model file is
 | `large-v2` / `large` | Very slow | Excellent | ~10 GB | Legacy large models |
 | `turbo` | Fast | High (EN-focused) | ~6 GB | English content, speed/quality balance |
 
-**Rules of thumb:**
-
-- **No NVIDIA GPU** → stay on `tiny` or `base`, CUDA toggle OFF.
-- **8 GB VRAM** → `base` or `small` comfortably; `large-v3` may work.
-- **12+ GB VRAM** → `large-v3` for production quality.
-- **English-only videos** → `.en` variants are faster (skip multilingual detection).
-
 Changing model or CUDA setting **unloads and reloads** Whisper automatically.
 
 ---
 
-## Phrase timing vs word-level timestamps
 
-### Default: cinema-style phrase timing (recommended)
-
-**Word-level timestamps are OFF by default.** The app still uses Whisper word timings internally, then refines cues for natural reading:
-
-- Small **lead-in** before speech starts
-- **Trail-out** after the last word
-- **Minimum gap** between consecutive subtitles
-- **Min/max duration** per cue
-
-Result: subtitles that feel like a movie — not karaoke-style flashing text.
-
-### Optional: word-level timestamps
+## Optional: word-level timestamps
 
 Enable **Word-level timestamps** in Settings when you need:
 
@@ -283,33 +165,8 @@ Each word becomes its own SRT cue. Best when output language matches spoken lang
 
 ---
 
-## GPU / CUDA acceleration
-
-| Badge in UI | Meaning |
-|-------------|---------|
-| `GPU: {name} (cuda)` | Whisper is running on your NVIDIA GPU |
-| `GPU available — CPU mode` | GPU detected but CUDA toggle is OFF |
-| `CPU mode (no CUDA detected)` | No NVIDIA GPU or drivers missing |
-
-`run.bat` runs `scripts\install_cuda_torch.ps1` which:
-
-1. Detects `nvidia-smi`
-2. Tries CUDA wheels: `cu128` → `cu126` → `cu124` → `cu121`
-3. Falls back to CPU PyTorch if all fail
-
-**No action needed** on most gaming/workstation PCs with current NVIDIA drivers.
-
----
 
 ## Phone & tablet (LAN access)
-
-> **LAN access is OFF by default.** You must enable it in Settings before any phone can connect.
-
-### Why `127.0.0.1` fails on a phone
-
-`127.0.0.1` always means **“this device itself.”** On your phone, that URL points to the phone — not your PC.
-
-### Setup (5 steps)
 
 1. Double-click **`run.bat`** on the PC (app must be running).
 2. In the app sidebar, enable **Allow LAN access (phone/tablet)**.
@@ -353,32 +210,6 @@ This adds an inbound rule for TCP port **8765**.
 
 ## Security & privacy
 
-### Is this on the public internet?
-
-**No — not by default.**
-
-```mermaid
-flowchart TD
-    A[Incoming request] --> B{From localhost?}
-    B -->|Yes| Z[Allow]
-    B -->|No| C{LAN toggle ON?}
-    C -->|No| D[403 Forbidden]
-    C -->|Yes| E{LAN_ONLY=true?}
-    E -->|Yes| F{Private IP?}
-    F -->|No| G[403 Block public internet]
-    F -->|Yes| Z
-    E -->|No| Z
-```
-
-| Protection | Default | What it does |
-|------------|---------|--------------|
-| **LAN access toggle** | OFF | Blocks all non-localhost clients with 403 |
-| **LAN_ONLY** | ON | Rejects public IPs (8.8.8.8, etc.) even if LAN is on |
-| **Private LAN IPs** | — | `192.168.x.x`, `10.x.x.x`, `172.16–31.x.x` only |
-| **No cloud upload** | — | Videos stay on your machine; Whisper runs locally |
-
-**Never port-forward port 8765 on your router** unless you fully understand the risk.
-
 ### What leaves your PC?
 
 | Data | Leaves PC? |
@@ -387,44 +218,6 @@ flowchart TD
 | Audio for Whisper | **No** — extracted to `logs/audio_cache/`, deleted after use |
 | Translation text | **Yes** — text segments sent to Google Translate API when target ≠ source |
 | QR code | **Yes** — generated via `api.qrserver.com` (URL only, when you open QR modal) |
-
----
-
-## System tray & background use
-
-When the desktop window opens, a **system tray icon** may appear (bottom-right taskbar).
-
-| Tray action | Effect |
-|-------------|--------|
-| **Open app** | Focus the main window |
-| **Show tray drop target** | Small floating chip — drag videos onto it |
-| **Import folder…** | Pick a folder via file dialog |
-| **Quit** | Exit the application |
-
-Useful when you want to drop files without bringing the main window forward.
-
----
-
-## Built-in “How to Use” tour
-
-Click **How to Use** in the top bar for a **12-step interactive guide** (powered by [driver.js](https://driverjs.com/)).
-
-| Step | Topic |
-|------|-------|
-| 1 | Add videos (PC drag vs phone upload) |
-| 2 | Video queue cards |
-| 3 | Source language |
-| 4 | Target languages & favorites |
-| 5 | Process All |
-| 6 | GPU / CPU badge |
-| 7 | Whisper model picker |
-| 8 | CUDA toggle |
-| 9 | Word-level timestamps |
-| 10 | LAN access toggle |
-| 11 | Phone/tablet links & QR |
-| 12 | Queue status |
-
-The tour **never auto-runs** on startup — only when you click the button.
 
 ---
 
@@ -517,31 +310,7 @@ Change `PORT=8766` in `.env`, restart via **`run.bat`**.
 
 ---
 
-## Project structure
 
-```
-Subtitles-Generator/
-├── run.bat                    ← START HERE (double-click)
-├── subtitles_generator.py     # Single-file app: UI + API + Whisper queue
-├── requirements.txt
-├── .env.example               # Config template (safe to publish)
-├── .env                       # Your local config (created by run.bat; do not upload)
-├── README.md
-│
-├── scripts/
-│   ├── install_ffmpeg.ps1     # Portable FFmpeg downloader
-│   ├── install_cuda_torch.ps1 # NVIDIA CUDA PyTorch installer
-│   └── allow_lan_firewall.ps1 # Windows Firewall rule (run as Admin)
-│
-├── models/                    # Whisper weights (auto-downloaded, gitignored)
-├── ffmpeg/                    # Portable FFmpeg (auto-installed, gitignored)
-├── venv/                      # Python virtualenv (auto-created, gitignored)
-├── logs/                      # Runtime logs (gitignored)
-├── uploads/                   # Phone upload staging (gitignored)
-└── user_settings.json         # Favorite languages (gitignored, auto-created)
-```
-
----
 
 ## How it works (architecture)
 
@@ -572,35 +341,6 @@ flowchart TB
     FF --> WH --> TR --> REF --> SRT
 ```
 
-**Design principles:**
-
-- **Single worker** — one transcription at a time (stable GPU memory).
-- **Idempotent** — existing SRT files are never overwritten unless removed manually.
-- **Portable** — everything lives inside the project folder.
-- **Opt-in networking** — LAN and word-level modes require explicit user action.
-
----
-
-## Logs & debugging
-
-Set `LOG_LEVEL=DEBUG` in `.env` for maximum detail. Set `LOG_LEVEL=INFO` for quieter logs.
-
-Each structured event in `events.jsonl` includes a timestamp and event name — useful for tracing queue behavior, FFmpeg runs, and LAN blocks.
-
----
-
-## Helper scripts
-
-Run these manually only when `run.bat` automation is not enough:
-
-| Script | When to use |
-|--------|-------------|
-| `scripts\install_ffmpeg.ps1` | FFmpeg download failed during `run.bat` |
-| `scripts\install_cuda_torch.ps1` | GPU not detected after driver update |
-| `scripts\allow_lan_firewall.ps1` | Phone cannot reach PC (run as **Administrator**) |
-
----
-
 ## Requirements
 
 | Requirement | Details |
@@ -625,7 +365,7 @@ No. Whisper runs entirely on your PC.
 They queue automatically, but transcribe **one at a time** for stability.
 
 **Can I use this on Mac or Linux?**  
-This repo is Windows-focused (`run.bat`, pywebview Edge, tray). The Python script can run manually on other OS with adjustments.
+YES The Python script can run manually on other OS with adjustments.
 
 **Why are LAN and word timestamps off by default?**  
 Security (LAN) and readability (phrase timing). Both are opt-in.
