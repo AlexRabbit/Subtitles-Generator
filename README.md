@@ -4,7 +4,7 @@
 > **Turn any video into professional `.srt` subtitle files** — locally, on your PC, powered by [OpenAI Whisper](https://github.com/openai/whisper).  
 > No cloud upload. No subscription. Drag, drop, pick languages, done.
 
-Inspired by [auto-subtitle](https://github.com/m1guelpf/auto-subtitle) — rebuilt as a portable, queue-based desktop app with a glassmorphism UI, GPU acceleration, phone/tablet support, and cinema-style phrase timing.
+Portable, queue-based desktop app with a glassmorphism UI, GPU acceleration, phone/tablet support, and cinema-style phrase timing.
 
 ---
 
