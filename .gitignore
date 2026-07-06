@@ -1,0 +1,42 @@
+# Local config (copy .env.example to .env)
+.env
+
+# Python
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Runtime / user data
+user_settings.json
+workspace_backup.json
+uploads/*
+!uploads/.gitkeep
+
+# Logs & temp audio
+logs/*.log
+logs/*.jsonl
+logs/startup.log
+logs/audio_cache/
+!logs/.gitkeep
+!logs/.gitignore
+
+# Downloaded models & ffmpeg (installed on first run)
+models/*.pt
+models/*.pt.*
+ffmpeg/
+ffmpeg.zip
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.tmp

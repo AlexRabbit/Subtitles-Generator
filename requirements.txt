@@ -1,0 +1,13 @@
+openai-whisper>=20250625
+torch
+torchaudio
+setuptools<82
+psutil>=5.9.0
+flask>=3.0.0
+python-dotenv>=1.0.0
+deep-translator>=1.11.4
+werkzeug>=3.0.0
+tkinterdnd2>=0.4.2
+pywebview>=5.0
+pystray>=0.19.5
+Pillow>=10.0.0
