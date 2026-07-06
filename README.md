@@ -1,3 +1,5 @@
+If this helped you, consider starring the repo ⭐
+
 # Subtitles Generator - Generate .srt Both Locally or Let it Run on your PC and use it On other Devices.
 <img width="1410" height="1041" alt="image" src="https://github.com/user-attachments/assets/213cf61d-8d39-4266-994d-67982d1913bf" />
 
